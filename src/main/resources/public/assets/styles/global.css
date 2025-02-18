@@ -1,0 +1,106 @@
+/* src/assets/styles/global.css */
+
+/* Load Ericsson Hilda font with .woff2 files */
+/* @font-face {
+  font-family: 'Ericsson Hilda';
+  src: url('/assets/fonts/EricssonHilda-Regular.woff2') format('woff2');
+  font-weight: 400; Regular
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Ericsson Hilda';
+  src: url('/assets/fonts/EricssonHilda-Bold.woff2') format('woff2');
+  font-weight: 700; Bold
+  font-style: normal;
+}
+ */
+ 
+/* Apply Ericsson Hilda as the default font for the entire website */
+body {
+/*   font-family: 'Ericsson Hilda', sans-serif; */
+  font-weight: normal; /* Default weight: Regular */
+}
+
+:root {
+  --bs-primary: #0058a3 !important;
+  --bs-secondary: #122c44 !important;
+  --bs-success: #008f4c !important;
+  --bs-info: #00a5df !important;
+  --bs-warning: #ffb400 !important;
+  --bs-danger: #d81b60 !important;
+  --bs-light: #f2f4f7 !important;
+  --bs-dark: #1c1c1c !important;
+}
+
+.btn-primary {
+  background-color: #0058a3 !important;
+  border-color: #0058a3 !important;
+}
+
+.btn-secondary {
+  background-color: #122c44 !important;
+  border-color: #122c44 !important;
+}
+
+.btn-dashboard{
+  background-color: #14e2a4 !important;
+  border-color: #14e2a4 !important;
+}
+
+.bg-primary {
+  background-color: #0058a3 !important;
+}
+
+.btn-active{
+  background-color: #ffc456 !important;
+  border-color: #ffc456 !important;
+}
+
+.text-primary {
+  color: #0058a3 !important;
+}
+
+/* Custom dropdown menu styling */
+.custom-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+}
+
+.custom-dropdown-menu .form-check:hover {
+  background-color: #c7d9eb; 
+  cursor: pointer; 
+}
+
+/* some style settings for displaying username and user-role in navbar
+.user-info {
+  color: #FFD700; 
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid #FFD700;
+  border-radius: 12px;
+  padding: 4px 8px;
+  display: inline-block;
+}
+
+.user-role {
+  font-size: 0.8em;
+  margin-left: 4px;
+}
+*/
+
+.alert-orange {
+    background-color: orange;
+    color: black;
+    border: 1px solid darkorange;
+}
+
+
+/* COME BACK LATER TO FIX THE FONT ISSUE */
+
+
