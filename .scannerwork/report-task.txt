@@ -1,6 +1,0 @@
-projectKey=nms
-serverUrl=http://localhost:9000
-serverVersion=25.2.0.102705
-dashboardUrl=http://localhost:9000/dashboard?id=nms
-ceTaskId=72dfd2e8-ffba-4265-8c78-cfd9f575fcf9
-ceTaskUrl=http://localhost:9000/api/ce/task?id=72dfd2e8-ffba-4265-8c78-cfd9f575fcf9
