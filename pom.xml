@@ -10,10 +10,10 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.tus</groupId>
-	<artifactId>DNSResolver</artifactId>
+	<artifactId>EduDNSFilter</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>DNS Resolver And Filter</name>
-	<description>Filtering internet traffic</description>
+	<name>EduDNSFilter</name>
+	<description>Filtering internet traffic for educational insitutes</description>
 
 	<properties>
 		<java.version>11</java.version>

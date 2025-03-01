@@ -1,95 +1,139 @@
 export default {
   template: `
-    <div class="container py-4">
-      <h2 class="fw-bold text-primary mb-1">Manage Users</h2>
-      <!-- User Management Table -->
-      <div class="card shadow-sm border-0">
-        <div class="card-body p-4">
-          <table id="usersTable" class="table table-striped table-bordered w-100">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Role</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-          </table>
-        </div>
-      </div>
-
-      <!-- Add/Edit User Modal -->
-      <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="modalTitle">Add New User</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <form id="userForm">
-                <input type="hidden" id="userId">
-                <div class="mb-3">
-                  <label for="username" class="form-label">Username</label>
-                  <input type="text" class="form-control" id="username" required>
-                </div>
-                <div class="mb-3" id="passwordGroup">
-                  <label for="password" class="form-label">Password</label>
-                    <input 
-                    type="password" 
-                    class="form-control" 
-                    id="password"
-                  >
-                  <div class="form-text">Password must be at least 6 characters long and contain at least one number</div>
-                </div>
-                <div class="mb-3">
-                  <label for="role" class="form-label">Role</label>
-                  <select class="form-select" id="role" required>
-                    <option value="">Select Role</option>
-                    <option value="ADMIN">Admin</option>
-                    <option value="TEACHER">Teacher</option>
-                  </select>
-                </div>
-              </form>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="button" class="btn btn-primary" id="saveUser">Save</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Delete Confirmation Modal -->
-      <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Confirm Deletion</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              Are you sure you want to delete this user?
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Alert Toast -->
-      <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-        <div id="alertToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-          <div class="toast-header">
-            <strong class="me-auto" id="toastTitle">Notification</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-          </div>
-          <div class="toast-body" id="toastMessage"></div>
-        </div>
-      </div>
+   <div class="container py-5">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h2 class="fw-bold text-primary mb-0">Manage Users</h2>
+        <button class="btn btn-primary btn-sm shadow-sm" data-bs-toggle="modal" data-bs-target="#userModal">
+            <i class="bi bi-person-plus me-2"></i> Add User
+        </button>
     </div>
+
+    <!-- Data Table -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body p-0">
+            <table id="usersTable" class="table table-hover align-middle mb-0" 
+                   style="min-width: 800px;">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">ID</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th style="width: 100px;"></th>
+                        <th style="width: 100px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data populated via DataTables -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 shadow">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="modalTitle">Add New User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body pt-0">
+                    <form id="userForm" class="needs-validation" novalidate>
+                        <input type="hidden" id="userId">
+                        
+                        <div class="mb-3">
+                            <label for="username" class="form-label fw-semibold">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0 bg-transparent">
+                                    <i class="bi bi-person"></i>
+                                </span>
+                                <input type="text" class="form-control border-start-0" 
+                                       id="username" required placeholder="john_doe">
+                            </div>
+                            <div class="invalid-feedback">Please enter a valid username</div>
+                        </div>
+
+                        <div class="mb-3" id="passwordGroup">
+                            <label for="password" class="form-label fw-semibold">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0 bg-transparent">
+                                    <i class="bi bi-lock"></i>
+                                </span>
+                                <input type="password" class="form-control border-start-0" 
+                                       id="password" placeholder="••••••••">
+                            </div>
+                            <div class="form-text text-muted small">
+                                Minimum 6 characters with at least one number
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="role" class="form-label fw-semibold">Role</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0 bg-transparent">
+                                    <i class="bi bi-person-badge"></i>
+                                </span>
+                                <select class="form-select border-start-0" id="role" required>
+                                    <option value="">Select Role</option>
+                                    <option value="ADMIN">Administrator</option>
+                                    <option value="TEACHER">Teacher</option>
+                                </select>
+                            </div>
+                            <div class="invalid-feedback">Please select a valid role</div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" class="btn btn-link text-secondary" 
+                            data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary rounded-pill px-4" 
+                            id="saveUser">
+                        <span class="spinner-border spinner-border-sm me-2 d-none" 
+                              role="status" aria-hidden="true"></span>
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 shadow">
+                <div class="modal-body text-center p-4">
+                    <i class="bi bi-exclamation-triangle display-3 text-danger mb-3"></i>
+                    <h5 class="fw-bold mb-3">Confirm Deletion</h5>
+                    <p class="mb-4">Are you sure you want to permanently delete this user?</p>
+                    <button type="button" class="btn btn-outline-secondary me-3" 
+                            data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger rounded-pill px-4" 
+                            id="confirmDelete">
+                        <span class="spinner-border spinner-border-sm me-2 d-none" 
+                              role="status" aria-hidden="true"></span>
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+        <div id="alertToast" class="toast align-items-center" role="alert">
+            <div class="toast-body d-flex align-items-center">
+                <div class="toast-icon me-3">
+                    <i class="bi fs-4" :class="toastType === 'success' ? 'bi-check-circle text-success' : 'bi-exclamation-triangle text-danger'"></i>
+                </div>
+                <div>
+                    <strong class="me-auto" id="toastTitle">Success</strong>
+                    <div class="text-muted small" id="toastMessage">User added successfully</div>
+                </div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+</div>
   `,
 
   data() {
@@ -134,21 +178,7 @@ export default {
             `
           }
         ],
-        dom: 'Blfrtip',
-        buttons: [
-          {
-            text: '<i class="bi bi-plus-circle"></i> Add New User',
-            className: 'btn btn-success mb-3',
-            action: () => this.showUserModal()
-          }
-        ],
-        buttons: [
-          {
-            text: '<i class="bi bi-plus-circle me-1"></i> Add User',
-            className: 'btn btn-success mx-3',
-            action: () => this.showUserModal()
-          }
-        ]
+        dom: 'Blfrtip'
       });
     },
 

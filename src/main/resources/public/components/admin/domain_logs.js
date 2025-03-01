@@ -23,7 +23,8 @@ export default {
               <th>Domain</th>
               <th>Status</th>
               <th>Timestamp</th>
-              <th>Actions</th>
+              <th>Block/Unblock</th>
+              <th>Delete</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -66,11 +67,13 @@ export default {
   data() {
     return {
       dataTable: null,
-      logToDelete: null
+      logToDelete: null,
+      domainBlockStatus: {} // Store domain block status
     };
   },
 
   mounted() {
+    this.fetchBlockedDomains();
     this.initDataTable();
     this.initializeEventListeners();
   },
@@ -78,15 +81,44 @@ export default {
   methods: {
     // Method to refresh the data table
     refreshTable() {
-      this.dataTable.ajax.reload(); // Reload the data in the table
-      this.showToast('Success', 'Table refreshed successfully!', 'success');
+      this.fetchBlockedDomains().then(() => {
+        this.dataTable.ajax.reload(); // Reload the data in the table
+        this.showToast('Success', 'Table refreshed successfully!', 'success');
+      });
+    },
+
+    // Fetch the current list of blocked domains
+    async fetchBlockedDomains() {
+      try {
+        const response = await fetch('/api/admin/blocklist', {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt')}` }
+        });
+        
+        if (response.ok) {
+          const blockedDomains = await response.json();
+          
+          // Reset the domain status map
+          this.domainBlockStatus = {};
+          
+          // Update the domain status map
+          blockedDomains.forEach(item => {
+            this.domainBlockStatus[item.domain] = true;
+          });
+          
+          return true;
+        }
+        return false;
+      } catch (error) {
+        console.error("Error fetching blocked domains:", error);
+        return false;
+      }
     },
 
     initDataTable() {
       this.dataTable = $('#domainLogsTable').DataTable({
         responsive: true,
         ajax: {
-          url: '/api/admin/domain-logs', // Change this to your logs endpoint
+          url: '/api/admin/domain-logs',
           dataSrc: '',
           headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt')}` }
         },
@@ -103,6 +135,29 @@ export default {
           },
           { data: 'timestamp' },
           {
+            // Block/Unblock toggle column
+            data: null,
+            orderable: false,
+            className: 'text-center',
+            render: (data, type, row) => {
+              const domain = row.domain;
+              const isBlocked = this.domainBlockStatus[domain] || false;
+              
+              return `
+                <div class="form-check form-switch d-flex justify-content-center">
+                  <input class="form-check-input block-toggle" type="checkbox" 
+                    id="blockToggle_${row.id}" 
+                    data-domain="${domain}" 
+                    ${isBlocked ? 'checked' : ''}>
+                  <label class="form-check-label ms-2" for="blockToggle_${row.id}">
+                    ${isBlocked ? 'Blocked' : 'Unblocked'}
+                  </label>
+                </div>
+              `;
+            }
+          },
+          {
+            // Delete column
             data: null,
             orderable: false,
             className: 'text-center',
@@ -110,15 +165,18 @@ export default {
               <button class="btn btn-danger btn-sm delete-log" data-id="${row.id}">
                 <i class="bi bi-trash"></i> Delete
               </button>
-              <button class="btn btn-warning btn-sm block-domain" data-domain="${row.domain}">
-                <i class="bi bi-lock"></i> Block
-              </button>
-              <button class="btn btn-success btn-sm unblock-domain" data-domain="${row.domain}">
-                <i class="bi bi-unlock"></i> Unblock
-              </button>
             `
           }
-        ]
+        ],
+        drawCallback: () => {
+          // Update toggle states after table redraw
+          $('.block-toggle').each((i, toggle) => {
+            const domain = $(toggle).data('domain');
+            const isBlocked = this.domainBlockStatus[domain] || false;
+            $(toggle).prop('checked', isBlocked);
+            $(toggle).next('label').text(isBlocked ? 'Blocked' : 'Unblocked');
+          });
+        }
       });
     },
 
@@ -131,16 +189,16 @@ export default {
         deleteModal.show();
       });
 
-      // Block domain button click
-      $('#domainLogsTable').on('click', '.block-domain', (e) => {
+      // Toggle block/unblock switch
+      $('#domainLogsTable').on('change', '.block-toggle', (e) => {
         const domain = $(e.currentTarget).data('domain');
-        this.blockDomain(domain);
-      });
-
-      // Unblock domain button click
-      $('#domainLogsTable').on('click', '.unblock-domain', (e) => {
-        const domain = $(e.currentTarget).data('domain');
-        this.unblockDomain(domain);
+        const isBlocked = $(e.currentTarget).prop('checked');
+        
+        if (isBlocked) {
+          this.blockDomain(domain, e.currentTarget);
+        } else {
+          this.unblockDomain(domain, e.currentTarget);
+        }
       });
 
       // Confirm delete
@@ -185,7 +243,7 @@ export default {
       }
     },
 
-    async blockDomain(domain) {
+    async blockDomain(domain, toggleElement) {
       try {
         const response = await fetch('/api/admin/blocklist', {
           method: 'POST',
@@ -197,18 +255,29 @@ export default {
         });
 
         if (response.ok) {
-          this.showToast('Success', `${domain} has been added to the blocklist!`, 'success');
+          this.domainBlockStatus[domain] = true;
+          $(toggleElement).next('label').text('Blocked');
+          this.showToast('Success', `${domain} has been blocked!`, 'success');
         } else if(response.status === 400) {
-          this.showToast('Error', 'Domain is already blocked', 'error');
+          this.showToast('Info', 'Domain is already blocked', 'success');
+          this.domainBlockStatus[domain] = true;
+          $(toggleElement).prop('checked', true);
+          $(toggleElement).next('label').text('Blocked');
         } else {
           this.showToast('Error', 'Failed to block the domain', 'error');
+          this.domainBlockStatus[domain] = false;
+          $(toggleElement).prop('checked', false);
+          $(toggleElement).next('label').text('Unblocked');
         }
       } catch (error) {
         this.showToast('Error', error.message, 'error');
+        this.domainBlockStatus[domain] = false;
+        $(toggleElement).prop('checked', false);
+        $(toggleElement).next('label').text('Unblocked');
       }
     },
 
-    async unblockDomain(domain) {
+    async unblockDomain(domain, toggleElement) {
       try {
         const response = await fetch(`/api/admin/blocklist/name/${domain}`, {
           method: 'DELETE',
@@ -218,15 +287,25 @@ export default {
         });
 
         if (response.ok) {
-          this.showToast('Success', `${domain} has been removed from the blocklist!`, 'success');
-          this.dataTable.ajax.reload(); // Reload the table to reflect changes
+          this.domainBlockStatus[domain] = false;
+          $(toggleElement).next('label').text('Unblocked');
+          this.showToast('Success', `${domain} has been unblocked!`, 'success');
         } else if(response.status === 404){
-          this.showToast('Error', 'Domain is not blocked', 'error');
+          this.showToast('Info', 'Domain is not blocked', 'success');
+          this.domainBlockStatus[domain] = false;
+          $(toggleElement).prop('checked', false);
+          $(toggleElement).next('label').text('Unblocked');
         } else {
           this.showToast('Error', 'Failed to unblock the domain', 'error');
+          this.domainBlockStatus[domain] = true;
+          $(toggleElement).prop('checked', true);
+          $(toggleElement).next('label').text('Blocked');
         }
       } catch (error) {
         this.showToast('Error', error.message, 'error');
+        this.domainBlockStatus[domain] = true;
+        $(toggleElement).prop('checked', true);
+        $(toggleElement).next('label').text('Blocked');
       }
     },
 

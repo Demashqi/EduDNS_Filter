@@ -21,7 +21,7 @@ body {
 /*   font-family: 'Ericsson Hilda', sans-serif; */
   font-weight: normal; /* Default weight: Regular */
 }
-
+/* 
 :root {
   --bs-primary: #0058a3 !important;
   --bs-secondary: #122c44 !important;
@@ -62,7 +62,7 @@ body {
 }
 
 /* Custom dropdown menu styling */
-.custom-dropdown-menu {
+/* .custom-dropdown-menu {
   position: absolute;
   top: 100%;
   left: 0;
@@ -76,7 +76,7 @@ body {
 .custom-dropdown-menu .form-check:hover {
   background-color: #c7d9eb; 
   cursor: pointer; 
-}
+}  */
 
 /* some style settings for displaying username and user-role in navbar
 .user-info {
@@ -94,13 +94,42 @@ body {
 }
 */
 
-.alert-orange {
+/* .alert-orange {
     background-color: orange;
     color: black;
     border: 1px solid darkorange;
-}
+} */
 
 
 /* COME BACK LATER TO FIX THE FONT ISSUE */
 
 
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+    margin: 1rem;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    margin: 1rem;
+}
+
+.table thead th {
+    white-space: nowrap;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+
+
+/* New column styling */
+.table th:last-child,
+.table td:last-child {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.btn-sm {
+  min-width: 80px;
+}

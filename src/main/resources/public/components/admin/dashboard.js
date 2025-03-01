@@ -268,18 +268,44 @@ export default {
       processTimeSeriesData(last24h, now) {
         const timeData = new Map();
         const hourFormat = { hour: '2-digit', minute: '2-digit' };
-  
+        
         // Initialize time slots
         for (let i = 23; i >= 0; i--) {
           const time = new Date(now - i * 60 * 60 * 1000);
+          // Use a consistent format for the time label
           const timeLabel = time.toLocaleTimeString([], hourFormat);
           timeData.set(timeLabel, { allowed: 0, blocked: 0 });
         }
-  
+        
+        // Add console logging to check your data
+        console.log("Total logs:", last24h.length);
+        console.log("Blocked logs:", last24h.filter(log => log.blocked).length);
+        
         // Fill in the actual data
         last24h.forEach(log => {
-          const timeLabel = new Date(log.timestamp).toLocaleTimeString([], hourFormat);
-          if (timeData.has(timeLabel)) {
+          const logTime = new Date(log.timestamp);
+          const timeLabel = logTime.toLocaleTimeString([], hourFormat);
+          
+          // Debug which timestamps aren't matching
+          if (!timeData.has(timeLabel)) {
+            console.log("Time not found in map:", timeLabel, "from log timestamp:", log.timestamp);
+            // Find the closest hour slot
+            const closestSlot = Array.from(timeData.keys()).reduce((prev, curr) => {
+              const prevTime = new Date(`2025-03-01T${prev}`).getTime();
+              const currTime = new Date(`2025-03-01T${curr}`).getTime();
+              const logTimeMs = logTime.getTime();
+              return Math.abs(currTime - logTimeMs) < Math.abs(prevTime - logTimeMs) ? curr : prev;
+            });
+            console.log("Using closest slot instead:", closestSlot);
+            
+            // Fallback to closest time slot
+            if (log.blocked) {
+              timeData.get(closestSlot).blocked++;
+            } else {
+              timeData.get(closestSlot).allowed++;
+            }
+          } else {
+            // Normal case - time label found
             const data = timeData.get(timeLabel);
             if (log.blocked) {
               data.blocked++;
@@ -288,13 +314,23 @@ export default {
             }
           }
         });
-  
+        
+        // Add debugging for final data
+        console.log("Time data map:", Object.fromEntries(timeData));
+        
         const sortedTimeData = Array.from(timeData.entries());
-        return {
+        const result = {
           timeLabels: sortedTimeData.map(([label]) => label),
           allowedData: sortedTimeData.map(([, data]) => data.allowed),
           blockedData: sortedTimeData.map(([, data]) => data.blocked)
         };
+        
+        // Final check of the processed data
+        console.log("Processed time labels:", result.timeLabels);
+        console.log("Processed allowed data:", result.allowedData);
+        console.log("Processed blocked data:", result.blockedData);
+        
+        return result;
       },
   
       handleResize() {
