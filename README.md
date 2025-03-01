@@ -18,8 +18,7 @@ A DNS server with content filtering capabilities designed for educational instit
 - Monitor real-time network traffic
 - View logs of blocked requests
 - Manage user accounts (create, update, delete)
-- System health monitoring
-- Export traffic statistics reports
+- Automatic DNS configuration files for Windows
 
 ## Technology Stack
 - **Core**: Spring Boot 3.1.5
