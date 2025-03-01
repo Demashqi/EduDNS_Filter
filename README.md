@@ -36,4 +36,4 @@ A DNS server with content filtering capabilities designed for educational instit
 ### Setup
 1. Clone repository:
    ```bash
-   git clone https://github.com/yourusername/dns-filter-server.git
+   git clone https://github.com/Demashqi/DNSResolver.git
