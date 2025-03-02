@@ -49,48 +49,44 @@ export default {
     return {
       username: '',
       password: '',
-      errorMessage: ''
+      errorMessage: '',
+      isLoading: false
     };
   },
   methods: {
-    async handleLogin() {
-		this.isLoading = true;
-		this.errorMessage = '';
-		
-      try {
-        // Use the provided fetch call to authenticate.
-        const response = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username: this.username, password: this.password })
-        });
-		
-		if (!response.ok) throw new Error('Invalid username or password');
-
-        if (!response.ok) {
-          // Attempt to parse error details from the response.
-          const errorData = await response.json().catch(() => ({}));
-          this.errorMessage = errorData.error || 'Login failed';
-          return;
+    handleLogin() {
+      this.isLoading = true;
+      this.errorMessage = '';
+      
+      $.ajax({
+        url: '/api/auth/login',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+          username: this.username,
+          password: this.password
+        }),
+        success: (data) => {
+          localStorage.setItem('jwt', data.jwt);
+          localStorage.setItem('username', data.username);
+          localStorage.setItem('role', data.roles.join(', '));
+          localStorage.setItem('currentRole', data.roles[0]);
+          localStorage.setItem('links', JSON.stringify(data._links));
+          
+          this.$root.changeView('data_import');
+          window.location.reload();
+        },
+        error: (jqXHR) => {
+          try {
+            const errorData = jqXHR.responseJSON || {};
+            this.errorMessage = errorData.error || 'Login failed';
+          } catch (e) {
+            this.errorMessage = 'An unexpected error occurred';
+          }
+        },
+        complete: () => {
+          this.isLoading = false;
         }
-
-        const data = await response.json();
-        // Expecting the response to contain: data.jwt, data.username, and data.roles (an array).
-        localStorage.setItem('jwt', data.jwt);
-        localStorage.setItem('username', data.username);
-        localStorage.setItem('role', data.roles.join(', '));
-        localStorage.setItem('currentRole',data.roles[0]);
-
-
-        // Change the view to data_import (or another appropriate view).
-        this.$root.changeView('data_import');
-        // Reload the page so that global state picks up the new authentication data.
-        window.location.reload();
-      } catch (error) {
-        this.errorMessage = 'Error: ' + error.message;
-      } finally {
-	    this.isLoading = false;
+      });
     }
-  }
-  }
-};
+  }}

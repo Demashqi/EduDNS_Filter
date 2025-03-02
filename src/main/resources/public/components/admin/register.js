@@ -140,11 +140,17 @@ export default {
     return {
       dataTable: null,
       userToDelete: null,
-      editMode: false
+      editMode: false,
+      apiLinks: {} // Will hold the endpoints from localStorage
     };
   },
 
   mounted() {
+    // Load API links from localStorage so that all components can use them
+    const storedLinks = localStorage.getItem('links');
+    if (storedLinks) {
+      this.apiLinks = JSON.parse(storedLinks);
+    }
     this.initDataTable();
     this.initializeEventListeners();
   },
@@ -153,7 +159,8 @@ export default {
     initDataTable() {
       this.dataTable = $('#usersTable').DataTable({
         ajax: {
-          url: '/api/admin/users',
+          // Use the GET all users endpoint from stored links
+          url: this.apiLinks.getAllUsers.href,
           dataSrc: '',
           headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt')}` }
         },
@@ -201,7 +208,7 @@ export default {
         deleteModal.show();
       });
 
-      // Save user
+      // Save user button click
       $('#saveUser').on('click', () => this.saveUser());
 
       // Show password field when adding new user, hide when editing
@@ -252,80 +259,68 @@ export default {
       new bootstrap.Modal(document.getElementById('userModal')).show();
     },
 
-    async saveUser() {
-      const form = document.getElementById('userForm');
+    saveUser() {
+      const form = $('#userForm')[0];
       if (!form.checkValidity()) {
         form.reportValidity();
         return;
       }
 
-      const userId = document.getElementById('userId').value;
       const userData = {
-        username: document.getElementById('username').value,
-        roles: [document.getElementById('role').value], 
-        password: document.getElementById('password').value !== '' ? document.getElementById('password').value : null
-
+        username: $('#username').val(),
+        roles: [$('#role').val()],
+        password: $('#password').val() || undefined
       };
 
-      if (!this.editMode) {
-        userData.password = document.getElementById('password').value;
-      }
+      const endpoint = this.editMode 
+        ? this.apiLinks.updateUserById.href.replace('{id}', $('#userId').val())
+        : this.apiLinks.registerUser.href;
+      const method = this.editMode ? 'PUT' : 'POST';
 
-      try {
-        const response = await fetch(
-          this.editMode ? `/api/admin/users/${userId}` : '/api/admin/register',
-          {
-            method: this.editMode ? 'PUT' : 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('jwt')}`
-            },
-            body: JSON.stringify(userData)
-          }
-        );
-
-        if (response.ok) {
+      $.ajax({
+        url: endpoint,
+        method: method,
+        contentType: 'application/json',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt')}` },
+        data: JSON.stringify(userData),
+        success: () => {
           this.showToast('Success', `User ${this.editMode ? 'updated' : 'created'} successfully!`, 'success');
           this.dataTable.ajax.reload();
-          bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
-        } else if (response.status === 409) {
-          this.showToast('Error', 'Username already taken', 'error');
+          $('#userModal').modal('hide');
+        },
+        error: (jqXHR) => {
+          if (jqXHR.status === 409) {
+            this.showToast('Error', 'Username already taken', 'error');
+          } else if (jqXHR.status === 403) {
+            this.showToast('Error', 'Admins cannot remove their own admin role', 'error');
+          } else {
+            const error = jqXHR.responseJSON || {};
+            this.showToast('Error', error.message || 'Operation failed', 'error');
+          }
         }
-        else if(response.status === 403) {
-          this.showToast('Error', 'Admins cannot remove their own admin role.', 'error');
-
-        } 
-        
-        else {
-          const error = await response.json();
-          this.showToast('Error', error.message || 'Operation failed', 'error');
-        }
-      } catch (error) {
-        this.showToast('Error', error.message, 'error');
-      }
+      });
     },
 
-    async deleteUser() {
-      try {
-        const response = await fetch(`/api/admin/users/${this.userToDelete}`, {
-          method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt')}` }
-        });
-
-        if (response.ok) {
+    deleteUser() {
+      const endpoint = this.apiLinks.deleteUserById.href.replace('{id}', this.userToDelete);
+      
+      $.ajax({
+        url: endpoint,
+        method: this.apiLinks.deleteUserById.method,
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt')}` },
+        success: () => {
           this.showToast('Success', 'User deleted successfully!', 'success');
           this.dataTable.ajax.reload();
-        } else if(response.status === 403) {
-          this.showToast('Error', 'Admins cannot delete themselves.', 'error');
-
-        } else {
-          this.showToast('Error', 'Failed to delete user', 'error');
+          $('#deleteModal').modal('hide');
+        },
+        error: (jqXHR) => {
+          if (jqXHR.status === 403) {
+            this.showToast('Error', 'Admins cannot delete themselves', 'error');
+          } else {
+            this.showToast('Error', 'Failed to delete user', 'error');
+          }
         }
-      } catch (error) {
-        this.showToast('Error', error.message, 'error');
-      } finally {
-        bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
-      }
+      });
     },
 
     showToast(title, message, type) {

@@ -1,0 +1,170 @@
+{
+    "info": {
+        "name": "EduDNS API Collection",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Authentication",
+            "item": [
+                {
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin\"\n}"
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response = pm.response.json();",
+                                    "pm.environment.set(\"jwtToken\", response.jwt);"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Domain Logs",
+            "item": [
+                {
+                    "name": "Get Domain Logs",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/admin/domain-logs", "host": ["{{baseUrl}}"], "path": ["api", "admin", "domain-logs"] }
+                    }
+                },
+                {
+                    "name": "Delete All Logs",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/admin/domain-logs", "host": ["{{baseUrl}}"], "path": ["api", "admin", "domain-logs"] }
+                    }
+                },
+                {
+                    "name": "Delete Log by ID",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/admin/domain-logs/:id", "host": ["{{baseUrl}}"], "path": ["api", "admin", "domain-logs", ":id"], "variable": [{ "key": "id", "value": "" }] }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Admin Users",
+            "item": [
+                {
+                    "name": "Register User",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            { "key": "Authorization", "value": "Bearer {{jwtToken}}" },
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/admin/register", "host": ["{{baseUrl}}"], "path": ["api", "admin", "register"] },
+                        "body": { "mode": "raw", "raw": "{ \"username\": \"testuser\", \"password\": \"testuser\", \"roles\": [\"ADMIN\"] }" }
+                    }
+                },
+                {
+                    "name": "Get All Users",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/admin/users", "host": ["{{baseUrl}}"], "path": ["api", "admin", "users"] }
+                    }
+                },
+                {
+                    "name": "Delete User by ID",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/admin/users/:id", "host": ["{{baseUrl}}"], "path": ["api", "admin", "users", ":id"], "variable": [{ "key": "id", "value": "" }] }
+                    }
+                },
+                {
+                    "name": "Update User by ID",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            { "key": "Authorization", "value": "Bearer {{jwtToken}}" },
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/admin/users/:id", "host": ["{{baseUrl}}"], "path": ["api", "admin", "users", ":id"], "variable": [{ "key": "id", "value": "" }] },
+                        "body": { "mode": "raw", "raw": "{ \"username\": \"updatedUser\" }" }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Blocklist",
+            "item": [
+                {
+                    "name": "Add Blocked Domain",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            { "key": "Authorization", "value": "Bearer {{jwtToken}}" },
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/admin/blocklist", "host": ["{{baseUrl}}"], "path": ["api", "admin", "blocklist"] },
+                        "body": { "mode": "raw", "raw": "{ \"domain\": \"example.com\" }" }
+                    }
+                },
+                {
+                    "name": "Get All Blocked Domains",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/admin/blocklist", "host": ["{{baseUrl}}"], "path": ["api", "admin", "blocklist"] }
+                    }
+                },
+                {
+                    "name": "Get Blocked Domain by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/admin/blocklist/:id", "host": ["{{baseUrl}}"], "path": ["api", "admin", "blocklist", ":id"], "variable": [{ "key": "id", "value": "" }] }
+                    }
+                },
+                {
+                    "name": "Delete Blocked Domain by Name",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/admin/blocklist/name/:domain", "host": ["{{baseUrl}}"], "path": ["api", "admin", "blocklist", "name", ":domain"], "variable": [{ "key": "domain", "value": "" }] }
+                    }
+                }
+            ]
+        }
+    ]
+}

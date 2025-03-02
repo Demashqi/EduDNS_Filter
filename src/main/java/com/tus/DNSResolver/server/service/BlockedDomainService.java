@@ -23,7 +23,7 @@ public class BlockedDomainService {
         // Check if the domain is already blocked
         if (isDomainBlocked(domain)) {
             // If already blocked, throw a ResponseStatusException with HTTP 400 Bad Request
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Domain is already blocked");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Domain is already blocked");
         }
 
         BlockedDomain blockedDomain = new BlockedDomain(domain);

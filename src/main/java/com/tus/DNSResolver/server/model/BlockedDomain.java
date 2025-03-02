@@ -1,7 +1,11 @@
 package com.tus.DNSResolver.server.model;
 
 import javax.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "blocked_domains")
 public class BlockedDomain {
@@ -16,23 +20,6 @@ public class BlockedDomain {
     public BlockedDomain() {}
 
     public BlockedDomain(String domain) {
-        this.domain = domain.toLowerCase();
-    }
-
-    // Getters and setters
-    public Long getId() {
-        return id;
-    }
-
-    public String getDomain() {
-        return domain;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setDomain(String domain) {
         this.domain = domain.toLowerCase();
     }
 }

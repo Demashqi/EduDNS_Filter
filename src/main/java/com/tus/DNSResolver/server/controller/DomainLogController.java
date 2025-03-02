@@ -31,7 +31,7 @@ public class DomainLogController {
     @DeleteMapping("/api/admin/domain-logs")
     public ResponseEntity<String> deleteLogs() {
         domainLogService.deleteLogs();
-        return new ResponseEntity<>("All logs have been deleted.", HttpStatus.OK);
+        return new ResponseEntity<>("All logs have been deleted.", HttpStatus.NO_CONTENT);
     }
 
      // Endpoint to delete a log by ID

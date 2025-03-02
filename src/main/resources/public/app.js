@@ -86,7 +86,8 @@ const restrictedComponentFiles = {
     "aside_menu.js" // Now allowed for ADMIN
   ],
   TEACHER: [
-    "teacher/blocked_domains.js"  ]
+    "teacher/blocked_domains.js",
+    "aside_menu.js"  ]
 };
 
 /**
