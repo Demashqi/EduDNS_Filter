@@ -1,5 +1,4 @@
 # EduDNS Filter - School Content Filtering Solution
-
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-F2F4F9?style=for-the-badge&logo=spring-boot)
 
@@ -72,6 +71,8 @@ For detailed API documentation, refer to the Postman collection:
 
 [EduDNS Filter API Documentation](https://documenter.getpostman.com/view/39743668/2sAYdimUYr)
 
+## ERD
+![ERD](src/main/resources/public/assets/images/EduDNS-ERD.png)
 ## License
 This project is part of an assignment submitted to Technological University of the Shannon: Midlands Midwest for the Web Technologies module in the Master of Science in Applied Software Engineering.
 
