@@ -10,7 +10,7 @@ export default {
 
     <!-- Data Table -->
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-        <div class="card-body p-0">
+        <div class="card-body p-5">
             <table id="blockedDomainsTable" class="table table-hover align-middle mb-0" 
                    style="min-width: 600px;">
                   <thead>

@@ -10,15 +10,14 @@ export default {
 
     <!-- Data Table -->
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-        <div class="card-body p-0">
-            <table id="usersTable" class="table table-hover align-middle mb-0" 
+        <div class="card-body p-5">
+            <table id="usersTable" class="table-hover align-middle table table-striped table-bordered w-100" 
                    style="min-width: 800px;">
                 <thead class="table-light">
                     <tr>
                         <th class="ps-4">ID</th>
                         <th>Username</th>
                         <th>Role</th>
-                        <th style="width: 100px;"></th>
                         <th style="width: 100px;"></th>
                     </tr>
                 </thead>
