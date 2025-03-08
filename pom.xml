@@ -18,7 +18,7 @@
     <description>Filtering internet traffic for educational institutes</description>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
     </properties>
 
     <dependencies>
@@ -82,6 +82,14 @@
             <version>1.18.36</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Karate -->
+        	<dependency>
+			<groupId>com.intuit.karate</groupId>
+			<artifactId>karate-junit5</artifactId>
+			<version>1.4.0</version>  <!-- Update to latest version -->
+			<scope>test</scope>
+		</dependency>
+        
     </dependencies>
 
     <build>
@@ -101,11 +109,91 @@
                 </configuration>
             </plugin>
 
-            <!-- Spring Boot Maven Plugin -->
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
+       <!-- Spring Boot Maven Plugin -->
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>pre-integration-test</id>
+                    <phase>pre-integration-test</phase>
+                    <goals>
+                        <goal>start</goal>
+                    </goals>
+                    <configuration>
+                        <jvmArguments>
+                            -javaagent:"${settings.localRepository}/org/jacoco/org.jacoco.agent/0.8.12/org.jacoco.agent-0.8.12-runtime.jar=destfile=${project.build.directory}/jacoco-it.exec,append=true"
+                            -Dspring.profiles.active=test
+                        </jvmArguments>
+                    </configuration>
+                </execution>
+                <execution>
+                    <id>post-integration-test</id>
+                    <phase>post-integration-test</phase>
+                    <goals>
+                        <goal>stop</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+
+        <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-antrun-plugin</artifactId>
+    <version>3.1.0</version>
+    <executions>
+        <execution>
+            <id>sleep-after-stop</id>
+            <phase>post-integration-test</phase>
+            <goals>
+                <goal>run</goal>
+            </goals>
+            <configuration>
+                <target>
+                    <sleep seconds="5"/> <!-- Adjust delay if needed -->
+                </target>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+
+        <!-- JaCoCo Configuration -->
+        <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.8.12</version>
+            <executions>
+                <execution>
+                    <id>report-integration</id>
+                    <phase>verify</phase>
+                    <goals>
+                        <goal>report-integration</goal>
+                    </goals>
+                    <configuration>
+                        <dataFile>${project.build.directory}/jacoco-it.exec</dataFile>
+                        <outputDirectory>${project.build.directory}/site/jacoco</outputDirectory>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+        <!-- Failsafe Plugin -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>3.0.0-M7</version>
+            <configuration>
+                <argLine>-Dkarate.env=test</argLine>
+            </configuration>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>integration-test</goal>
+                        <goal>verify</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
 </project>
