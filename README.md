@@ -69,7 +69,7 @@ A DNS server with content filtering capabilities designed for educational instit
 
 For detailed API documentation, refer to the Postman collection:
 
-[EduDNS Filter API Documentation](https://documenter.getpostman.com/view/39743668/2sAYdimUYr)
+[EduDNS Filter API Documentation](https://documenter.getpostman.com/view/39743668/2sAYdoF7ob)
 
 ## ERD
 ![ERD](src/main/resources/public/assets/images/EduDNS-ERD.png)
