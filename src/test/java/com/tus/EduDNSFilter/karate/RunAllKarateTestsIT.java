@@ -1,4 +1,4 @@
-package com.tus.nms.karate;
+package com.tus.EduDNSFilter.karate;
 
 import com.intuit.karate.Results;
 import com.intuit.karate.Runner;

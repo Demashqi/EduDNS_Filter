@@ -1,3 +1,4 @@
+package com.tus.EduDNSFilter.karate;
 // package com.tus.nms.karate;
 
 // import com.intuit.karate.junit5.Karate;
