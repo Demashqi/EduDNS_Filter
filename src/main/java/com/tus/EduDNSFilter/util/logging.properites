@@ -1,0 +1,20 @@
+# Set the default logging level for all loggers
+.level = INFO
+
+# Configure the ConsoleHandler to log all messages (from ALL level and above)
+handlers = java.util.logging.ConsoleHandler
+java.util.logging.ConsoleHandler.level = ALL
+java.util.logging.ConsoleHandler.formatter = java.util.logging.SimpleFormatter
+
+# Customize the SimpleFormatter output format
+java.util.logging.SimpleFormatter.format = %1$tF %1$tT %4$s %2$s %5$s%6$s%n
+
+
+
+##To Disable the logger
+# Disable logging globally
+#.level = OFF
+
+# If using handlers, also disable them by setting their level to OFF
+#handlers = java.util.logging.ConsoleHandler
+# java.util.logging.ConsoleHandler.level = OFF

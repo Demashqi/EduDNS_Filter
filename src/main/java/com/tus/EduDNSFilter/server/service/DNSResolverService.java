@@ -4,8 +4,12 @@ import org.springframework.stereotype.Service;
 import org.xbill.DNS.*;
 import org.xbill.DNS.Record;
 
+import java.util.logging.Logger;
+
+
 @Service
 public class DNSResolverService {
+    private static final Logger LOGGER = Logger.getLogger(DNSResolverService.class.getName());
 
     private final BlockedDomainService blockedDomainService;
     private final DomainLogService domainLogService;
@@ -19,11 +23,11 @@ public class DNSResolverService {
     public Message resolveDNS(Message query) {
         Record question = query.getQuestion();
         if (question == null) {
-            System.err.println("No question found in query");
+            LOGGER.warning("No question found in query");
             return buildErrorResponse(query, Rcode.FORMERR);
         }
         String domain = question.getName().toString(true);
-        System.out.println("Received query for: " + domain);
+        LOGGER.info("Received query for: " + domain);
 
         boolean isBlocked = blockedDomainService.isDomainBlocked(domain);
         
@@ -31,17 +35,17 @@ public class DNSResolverService {
         domainLogService.logDomain(domain, isBlocked);
 
         if (isBlocked) {
-            System.out.println("Domain is blocked: " + domain);
+            LOGGER.info("Domain is blocked: " + domain);
             return buildErrorResponse(query, Rcode.NXDOMAIN);
         }
 
         try {
             SimpleResolver resolver = new SimpleResolver(UPSTREAM_DNS);
             Message response = resolver.send(query);
-            System.out.println("Forwarded query and received response");
+            LOGGER.info("Forwarded query and received response");
             return response;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.severe(e.toString());
             return buildErrorResponse(query, Rcode.SERVFAIL);
         }
     }
