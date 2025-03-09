@@ -154,6 +154,10 @@
           <plugin>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-maven-plugin</artifactId>
+     <configuration>
+    <!-- Use an alternate port to avoid conflict with SonarQube -->
+    <jmxPort>9010</jmxPort>
+  </configuration>
     <executions>
         <execution>
             <id>pre-integration-test</id>
@@ -170,9 +174,6 @@
             <id>post-integration-test</id>
             <phase>post-integration-test</phase>
             <goals><goal>stop</goal></goals>
-            <configuration>
-                <failOnDestroy>true</failOnDestroy> <!-- Force shutdown -->
-            </configuration>
         </execution>
     </executions>
 </plugin>
