@@ -4,9 +4,9 @@
 
 A DNS server with content filtering capabilities designed for educational institutions. Allows teachers to manage blocked domains and enables administrators to monitor network traffic and manage user accounts.
 
-## Demo Video - Sample for now
+## EduDNS Video Demo
 
-[![EduDNS Filter Demo](https://img.youtube.com/vi/9XMMEPWkuOs/0.jpg)](https://www.youtube.com/watch?v=9XMMEPWkuOs)
+[![EduDNS Filter Demo](https://img.youtube.com/vi/uybHktUVCIU/0.jpg)](https://www.youtube.com/watch?v=uybHktUVCIU)
 
 ## Features
 
