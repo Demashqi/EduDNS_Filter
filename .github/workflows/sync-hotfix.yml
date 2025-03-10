@@ -1,4 +1,4 @@
-name: Sync Hotfix to Develop
+name: Sync Hotfix to Development
 on:
   push:
     branches:
@@ -11,8 +11,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Merge hotfix into develop
+      - name: Merge hotfix into development
         run: |
-          git checkout develop
-          git merge --no-ff main -m "Merge hotfix from main to develop"
-          git push origin develop
+          git checkout development
+          git merge --no-ff main -m "Merge hotfix from main to development"
+          git push origin development
