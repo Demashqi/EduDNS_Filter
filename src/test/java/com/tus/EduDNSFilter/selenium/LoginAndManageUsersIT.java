@@ -133,7 +133,7 @@ public class LoginAndManageUsersIT {
     waitForStep();
     driver.findElement(By.id("confirmDelete")).click();
     // 28 | assertText | id=usersTable_info | Showing 1 to 1 of 1 entries
-    // User Deleted
+    // User Deleted 
     waitForStep();
     assertThat(driver.findElement(By.id("usersTable_info")).getText(), is("Showing 1 to 1 of 1 entries"));
   }
