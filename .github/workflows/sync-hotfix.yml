@@ -1,0 +1,18 @@
+name: Sync Hotfix to Develop
+on:
+  push:
+    branches:
+      - main
+jobs:
+  sync:
+    if: startsWith(github.ref, 'refs/heads/hotfix/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Merge hotfix into develop
+        run: |
+          git checkout develop
+          git merge --no-ff main -m "Merge hotfix from main to develop"
+          git push origin develop
