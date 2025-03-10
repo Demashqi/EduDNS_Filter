@@ -19,6 +19,10 @@
 
     <properties>
         <java.version>17</java.version>
+  <!-- Use &quot; to wrap paths containing spaces -->
+  <jacoco.agent.arg>
+    -javaagent:&quot;${settings.localRepository}/org/jacoco/org.jacoco.agent/0.8.12/org.jacoco.agent-0.8.12-runtime.jar&quot;=destfile=&quot;${project.build.directory}/jacoco-it.exec&quot;,append=true
+  </jacoco.agent.arg>
     </properties>
 
     <dependencies>
@@ -151,29 +155,31 @@
             </plugin>
 
             <!-- Spring Boot Plugin -->
-          <plugin>
+        <plugin>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-maven-plugin</artifactId>
-     <configuration>
-    <!-- Use an alternate port to avoid conflict with SonarQube -->
-    <jmxPort>9010</jmxPort>
-      <jvmArguments>
-          -Djava.util.logging.config.file=DNSResolver\src\main\resources\logging.properties
-        </jvmArguments>
-  </configuration>
+    <configuration>
+        <jvmArguments>${jacoco.agent.arg}</jvmArguments>
+    </configuration>
     <executions>
         <execution>
             <id>pre-integration-test</id>
             <phase>pre-integration-test</phase>
-            <goals><goal>start</goal></goals>
+            <goals>
+                <goal>start</goal>
+            </goals>
         </execution>
         <execution>
             <id>post-integration-test</id>
             <phase>post-integration-test</phase>
-            <goals><goal>stop</goal></goals>
+            <goals>
+                <goal>stop</goal>
+            </goals>
         </execution>
     </executions>
 </plugin>
+
+
 
             <!-- Testing Plugins -->
                <!-- Surefire Plugin -->
@@ -182,40 +188,59 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <version>2.22.2</version>
         </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.2.2</version>
-                <configuration>
-                    <argLine>-Dkarate.env=test</argLine>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+            <!-- Failsafe Plugin Configuration -->
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-failsafe-plugin</artifactId>
+    <version>3.2.2</version>
+    <configuration>
+        <!-- Include the JaCoCo agent argument and your existing argLine -->
+        <argLine>${jacocoArgLine} -Dkarate.env=test</argLine>
+    </configuration>
+    <executions>
+        <execution>
+            <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
 
-            <!-- JaCoCo -->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.12</version>
-                <executions>
-                    <execution>
-                        <id>report-integration</id>
-                        <phase>verify</phase>
-                        <goals><goal>report-integration</goal></goals>
-                        <configuration>
-                            <dataFile>${project.build.directory}/jacoco-it.exec</dataFile>
-                            <outputDirectory>${project.build.directory}/site/jacoco</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+
+         <!-- JaCoCo Plugin Configuration -->
+<plugin>
+    <groupId>org.jacoco</groupId>
+    <artifactId>jacoco-maven-plugin</artifactId>
+    <version>0.8.12</version>
+    <executions>
+        <!-- This execution attaches the JaCoCo agent before integration tests run -->
+        <execution>
+            <id>prepare-agent</id>
+            <goals>
+                <goal>prepare-agent</goal>
+            </goals>
+            <configuration>
+                <destFile>${project.build.directory}/jacoco-it.exec</destFile>
+                <!-- This property will be used in the failsafe configuration -->
+                <propertyName>jacocoArgLine</propertyName>
+            </configuration>
+        </execution>
+        <!-- This execution generates the report after tests have run -->
+        <execution>
+            <id>report-integration</id>
+            <phase>verify</phase>
+            <goals>
+                <goal>report-integration</goal>
+            </goals>
+            <configuration>
+                <dataFile>${project.build.directory}/jacoco-it.exec</dataFile>
+                <outputDirectory>${project.build.directory}/site/jacoco</outputDirectory>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+
 
             <!-- Delay for JaCoCo -->
             <plugin>

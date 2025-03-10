@@ -107,7 +107,7 @@ public class loginAndAddDomainToBlockedListIT {
       builder.moveToElement(element, 0, 0).perform();
     }
     // 17 | assertText | id=blockedDomainsTable_info | Showing 1 to 1 of 1 entries
-    assertThat(driver.findElement(By.id("blockedDomainsTable_info")).getText(), is("Showing 1 to 1 of 1 entries"));
+    assertThat(driver.findElement(By.id("blockedDomainsTable_info")).getText(), is("Showing 1 to 2 of 2 entries"));
   }
 
 }

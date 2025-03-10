@@ -35,7 +35,7 @@ public class BlockedDomainService {
     }
 
     public BlockedDomain getBlockedDomainById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new RuntimeException("Blocked domain not found"));
+        return repository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Blocked domain not found"));
     }
 
     public BlockedDomain updateBlockedDomain(Long id, BlockedDomain blockedDomain) {
@@ -45,7 +45,7 @@ public class BlockedDomainService {
             domainToUpdate.setDomain(blockedDomain.getDomain());
             return repository.save(domainToUpdate);
         } else {
-            throw new RuntimeException("Blocked domain not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Blocked domain not found");
         }
     }
 
@@ -53,7 +53,7 @@ public class BlockedDomainService {
         if (repository.existsById(id)) {
             repository.deleteById(id);
         } else {
-            throw new RuntimeException("Blocked domain not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Blocked domain not found");
         }
     }
 
