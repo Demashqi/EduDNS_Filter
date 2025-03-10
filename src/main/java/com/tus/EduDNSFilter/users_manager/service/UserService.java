@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.tus.EduDNSFilter.users_manager.dto.UserDTO;
 import com.tus.EduDNSFilter.users_manager.model.Role;
 import com.tus.EduDNSFilter.users_manager.model.User;
 import com.tus.EduDNSFilter.users_manager.repository.UserRepository;
@@ -27,15 +28,16 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     // Register a new user
-    public User registerUser(User user) {
+    public UserDTO registerUser(User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already taken");
         }
     
         user.setRoles(assignRoles(user.getRoles()));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-    
-        return userRepository.save(user);
+        
+        User savedUser = userRepository.save(user);
+        return new UserDTO(savedUser.getUsername(), savedUser.getRoles());
     }
     
 
@@ -60,7 +62,7 @@ public class UserService {
 
 
     // Update user details
-    public User updateUser(Long id, User updatedUser) {
+    public UserDTO updateUser(Long id, User updatedUser) {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     
@@ -83,7 +85,8 @@ public class UserService {
             existingUser.setRoles(assignRoles(updatedUser.getRoles()));
         }
     
-        return userRepository.save(existingUser);
+        User savedUser = userRepository.save(existingUser);
+        return new UserDTO(savedUser.getUsername(), savedUser.getRoles());
     }
     
         

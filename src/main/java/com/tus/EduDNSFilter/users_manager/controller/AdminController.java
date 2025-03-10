@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.tus.EduDNSFilter.users_manager.dto.UserDTO;
 import com.tus.EduDNSFilter.users_manager.model.User;
 import com.tus.EduDNSFilter.users_manager.service.UserService;
 
@@ -23,7 +24,7 @@ public class AdminController {
     // Register a new user
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/register")
-    public User registerUser(@RequestBody User user) {
+    public UserDTO registerUser(@RequestBody User user) {
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User roles must be provided in the JSON body.");
         }
@@ -48,8 +49,8 @@ public class AdminController {
     // Update a user by ID
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/users/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
-        User user = userService.updateUser(id, updatedUser);
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+        UserDTO user = userService.updateUser(id, updatedUser);
         return ResponseEntity.ok(user);
     }
 }

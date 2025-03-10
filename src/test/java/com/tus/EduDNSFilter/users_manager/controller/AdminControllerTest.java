@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.tus.EduDNSFilter.users_manager.dto.UserDTO;
 import com.tus.EduDNSFilter.users_manager.model.Role;
 import com.tus.EduDNSFilter.users_manager.model.User;
 import com.tus.EduDNSFilter.users_manager.service.UserService;
@@ -49,9 +50,9 @@ public class AdminControllerTest {
 
     @Test
     public void testRegisterUser_Success() {
-        when(userService.registerUser(validUser)).thenReturn(validUser);
+        when(userService.registerUser(validUser)).thenReturn(new UserDTO(validUser.getUsername(), validUser.getRoles()));
 
-        User result = adminController.registerUser(validUser);
+        UserDTO result = adminController.registerUser(validUser);
         assertNotNull(result, "Returned user should not be null");
         assertEquals("testUser", result.getUsername(), "Username should match");
         verify(userService, times(1)).registerUser(validUser);
@@ -92,9 +93,9 @@ public class AdminControllerTest {
         updatedUser.setUsername("updatedUser");
         updatedUser.setRoles(Set.of(Role.ADMIN));
 
-        when(userService.updateUser(1L, updatedUser)).thenReturn(updatedUser);
+        when(userService.updateUser(1L, updatedUser)).thenReturn(new UserDTO(updatedUser.getUsername(), updatedUser.getRoles()));
 
-        ResponseEntity<User> response = adminController.updateUser(1L, updatedUser);
+        ResponseEntity<UserDTO> response = adminController.updateUser(1L, updatedUser);
         assertEquals(200, response.getStatusCodeValue(), "Response status should be 200 OK");
         assertNotNull(response.getBody(), "Response body should not be null");
         assertEquals("updatedUser", response.getBody().getUsername(), "Username should be updated");

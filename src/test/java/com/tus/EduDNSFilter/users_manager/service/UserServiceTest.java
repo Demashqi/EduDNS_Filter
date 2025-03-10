@@ -1,6 +1,7 @@
 package com.tus.EduDNSFilter.users_manager.service;
 
 
+import com.tus.EduDNSFilter.users_manager.dto.UserDTO;
 import com.tus.EduDNSFilter.users_manager.model.Role;
 import com.tus.EduDNSFilter.users_manager.model.User;
 import com.tus.EduDNSFilter.users_manager.repository.UserRepository;
@@ -188,7 +189,7 @@ class UserServiceTest {
         updatedUser.setRoles(Set.of(Role.TEACHER)); // e.g., new roles
 
         // WHEN
-        User result = userService.updateUser(userIdToUpdate, updatedUser);
+        UserDTO result = userService.updateUser(userIdToUpdate, updatedUser);
 
         // THEN
         verify(userRepository).save(existingUser);
