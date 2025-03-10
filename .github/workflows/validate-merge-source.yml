@@ -1,0 +1,17 @@
+name: Validate Merge Source
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check source branch
+        env:
+          SOURCE_BRANCH: ${{ github.head_ref }}
+        run: |
+          if [[ "$SOURCE_BRANCH" != "development" && "$SOURCE_BRANCH" != hotfix/* ]]; then
+            echo "ERROR: Merges into main are only allowed from 'development' or 'hotfix/*' branches."
+            exit 1
+          fi
