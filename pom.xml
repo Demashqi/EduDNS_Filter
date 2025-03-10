@@ -13,7 +13,7 @@
 
     <groupId>com.tus</groupId>
     <artifactId>EduDNSFilter</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>EduDNSFilter</name>
     <description>Filtering internet traffic for educational institutes</description>
 
